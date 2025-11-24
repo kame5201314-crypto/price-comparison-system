@@ -2,18 +2,23 @@ import { BaseCrawler, ProductResult, SearchFilters } from './base';
 import { ShopeeCrawler } from './shopee';
 import { PChomeCrawler } from './pchome';
 import { MomoCrawler } from './momo';
+import { Alibaba1688Crawler } from './alibaba1688';
 
 // Available crawlers
 export const crawlers: Record<string, BaseCrawler> = {
   shopee: new ShopeeCrawler(),
   pchome: new PChomeCrawler(),
   momo: new MomoCrawler(),
+  '1688': new Alibaba1688Crawler(),
+  alibaba1688: new Alibaba1688Crawler(), // 別名
 };
 
 export const platformNames = {
   shopee: '蝦皮購物',
   pchome: 'PChome 24h',
   momo: 'momo購物網',
+  '1688': '1688（阿里巴巴）',
+  alibaba1688: '1688（阿里巴巴）',
 };
 
 /**
@@ -74,6 +79,8 @@ export async function getProductFromUrl(url: string): Promise<ProductResult | nu
     platform = 'pchome';
   } else if (url.includes('momoshop.com.tw')) {
     platform = 'momo';
+  } else if (url.includes('1688.com')) {
+    platform = '1688';
   }
 
   if (!platform) {

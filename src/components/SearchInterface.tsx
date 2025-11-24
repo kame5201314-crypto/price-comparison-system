@@ -12,9 +12,10 @@ import {
 import { ProductResult } from '../services/crawlers';
 
 const PLATFORMS = [
-  { id: 'shopee', name: '蝦皮購物' },
-  { id: 'pchome', name: 'PChome 24h' },
-  { id: 'momo', name: 'momo購物網' },
+  { id: 'shopee', name: '蝦皮購物', icon: '🛍️' },
+  { id: 'pchome', name: 'PChome 24h', icon: '📦' },
+  { id: 'momo', name: 'momo購物網', icon: '🛒' },
+  { id: '1688', name: '1688（阿里巴巴）', icon: '🏭' },
 ];
 
 type SearchType = 'keyword' | 'url' | 'image';
@@ -28,7 +29,7 @@ export function SearchInterface({ onSearchComplete }: SearchInterfaceProps) {
   const [keyword, setKeyword] = useState('');
   const [url, setUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['shopee', 'pchome', 'momo']);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['shopee', 'pchome', 'momo', '1688']);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState('');
 
@@ -248,6 +249,7 @@ export function SearchInterface({ onSearchComplete }: SearchInterfaceProps) {
                     : 'border-gray-300 text-gray-700 hover:border-gray-400'
                 }`}
               >
+                <span className="mr-2">{platform.icon}</span>
                 {platform.name}
               </button>
             ))}

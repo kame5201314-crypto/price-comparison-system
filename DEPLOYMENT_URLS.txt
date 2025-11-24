@@ -1,0 +1,33 @@
+=======================================================
+智能商品比價系統 - 重要網址
+=======================================================
+
+【網站網址】
+https://smart-price-comparison-system.vercel.app
+
+【GitHub 倉庫】
+https://github.com/kame5201314-crypto/price-comparison-system
+
+【Vercel Dashboard】
+https://vercel.com/kaweis-projects/smart-price-comparison-system
+
+【Vercel 環境變數設置】
+https://vercel.com/kaweis-projects/smart-price-comparison-system/settings/environment-variables
+
+【Supabase Dashboard】
+https://supabase.com/dashboard/project/yaljsbdjfokfcnpjxvwq
+
+【Supabase SQL Editor】
+https://supabase.com/dashboard/project/yaljsbdjfokfcnpjxvwq/sql
+
+【Supabase API 設置】
+https://supabase.com/dashboard/project/yaljsbdjfokfcnpjxvwq/settings/api
+
+=======================================================
+環境變數配置
+=======================================================
+
+VITE_SUPABASE_URL=https://yaljsbdjfokfcnpjxvwq.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhbGpzYmRqZm9rZmNucGp4d3dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MjI0MjMsImV4cCI6MjA3OTE5ODQyM30.X0tOeMpSehQHFiQI-J2d8QrGoVcjVRyKZUS8lKCPNfI
+
+=======================================================

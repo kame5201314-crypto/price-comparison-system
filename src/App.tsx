@@ -166,7 +166,7 @@ function App() {
                 © 2025 智能商品比價系統 - Smart Price Comparison
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                支持蝦皮、PChome、momo等多個電商平台
+                支持蝦皮、PChome、momo、1688（阿里巴巴）等多個電商平台
               </p>
             </div>
             <div className="flex items-center space-x-4 text-sm text-gray-500">
