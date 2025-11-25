@@ -1,35 +1,48 @@
 import { useState } from 'react';
-import { Search, Package, Store, ShoppingBag, AlertCircle } from 'lucide-react';
+import { Search, Package, Store, ShoppingBag, AlertCircle, Home } from 'lucide-react';
 import { SearchInterface } from './components/SearchInterface';
 import { ComparisonResults } from './components/ComparisonResults';
+import { BatchComparison } from './components/BatchComparison';
+import { VendorManagement } from './components/VendorManagement';
 import { ProductResult } from './services/crawlers';
 import { isSupabaseConfigured } from './lib/supabase';
 
+type Page = 'home' | 'search' | 'batch' | 'vendors' | 'results';
+
 function App() {
+  const [currentPage, setCurrentPage] = useState<Page>('home');
   const [searchResults, setSearchResults] = useState<ProductResult[]>([]);
   const [searchKeywords, setSearchKeywords] = useState<string[]>([]);
-  const [showResults, setShowResults] = useState(false);
   const isConfigured = isSupabaseConfigured();
 
   const handleSearchComplete = (results: ProductResult[], keywords?: string[]) => {
     setSearchResults(results);
     setSearchKeywords(keywords || []);
-    setShowResults(true);
+    setCurrentPage('results');
   };
 
   const handleNewSearch = () => {
-    setShowResults(false);
+    setCurrentPage('home');
     setSearchResults([]);
     setSearchKeywords([]);
   };
 
+  const navItems = [
+    { id: 'home' as Page, label: '首頁', icon: Home },
+    { id: 'batch' as Page, label: '批量比價', icon: Package },
+    { id: 'vendors' as Page, label: '廠商管理', icon: Store },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div
+              className="flex items-center space-x-3 cursor-pointer"
+              onClick={() => setCurrentPage('home')}
+            >
               <div className="p-2 bg-blue-600 rounded-lg">
                 <Package className="w-6 h-6 text-white" />
               </div>
@@ -44,23 +57,49 @@ function App() {
             </div>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              <button
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
-                onClick={handleNewSearch}
-              >
-                <Search className="w-5 h-5" />
-                <span>搜尋比價</span>
-              </button>
-              <button className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
-                <Store className="w-5 h-5" />
-                <span>廠商管理</span>
-              </button>
-              <button className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
-                <ShoppingBag className="w-5 h-5" />
-                <span>訂單追蹤</span>
-              </button>
+            <nav className="hidden md:flex items-center space-x-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.id ||
+                  (item.id === 'home' && (currentPage === 'search' || currentPage === 'results'));
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentPage(item.id)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
             </nav>
+
+            {/* Mobile menu */}
+            <div className="flex md:hidden space-x-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentPage(item.id)}
+                    className={`p-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                    title={item.label}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </header>
@@ -74,22 +113,18 @@ function App() {
               <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <h3 className="text-sm font-semibold text-yellow-800 mb-1">
-                  ⚙️ 系統配置提醒
+                  系統配置提醒
                 </h3>
-                <p className="text-sm text-yellow-700 mb-2">
-                  Supabase 環境變數尚未配置，數據庫功能將無法使用。搜尋功能仍可正常使用。
-                </p>
-                <p className="text-xs text-yellow-600">
-                  請在 Vercel Dashboard 的 Settings → Environment Variables 中添加：
-                  <code className="ml-1 bg-yellow-100 px-1 py-0.5 rounded">VITE_SUPABASE_URL</code> 和
-                  <code className="ml-1 bg-yellow-100 px-1 py-0.5 rounded">VITE_SUPABASE_ANON_KEY</code>
+                <p className="text-sm text-yellow-700">
+                  部分功能使用本地存儲，數據僅保存在您的瀏覽器中。
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {!showResults ? (
+        {/* Home Page */}
+        {currentPage === 'home' && (
           <div className="space-y-8">
             {/* Hero Section */}
             <div className="text-center py-12">
@@ -104,9 +139,12 @@ function App() {
             {/* Search Interface */}
             <SearchInterface onSearchComplete={handleSearchComplete} />
 
-            {/* Features */}
+            {/* Features - Now Clickable */}
             <div className="grid md:grid-cols-3 gap-6 mt-12">
-              <div className="p-6 bg-white rounded-lg shadow-sm border">
+              <div
+                className="p-6 bg-white rounded-lg shadow-sm border cursor-pointer hover:shadow-md hover:border-blue-300 transition-all"
+                onClick={() => setCurrentPage('home')}
+              >
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Search className="w-6 h-6 text-blue-600" />
                 </div>
@@ -116,7 +154,10 @@ function App() {
                 </p>
               </div>
 
-              <div className="p-6 bg-white rounded-lg shadow-sm border">
+              <div
+                className="p-6 bg-white rounded-lg shadow-sm border cursor-pointer hover:shadow-md hover:border-green-300 transition-all"
+                onClick={() => setCurrentPage('batch')}
+              >
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                   <Package className="w-6 h-6 text-green-600" />
                 </div>
@@ -124,9 +165,15 @@ function App() {
                 <p className="text-gray-600 text-sm">
                   一次比較多個商品，最多支持100個商品同時比價
                 </p>
+                <span className="inline-block mt-2 text-green-600 text-sm font-medium">
+                  點擊使用 →
+                </span>
               </div>
 
-              <div className="p-6 bg-white rounded-lg shadow-sm border">
+              <div
+                className="p-6 bg-white rounded-lg shadow-sm border cursor-pointer hover:shadow-md hover:border-purple-300 transition-all"
+                onClick={() => setCurrentPage('vendors')}
+              >
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                   <Store className="w-6 h-6 text-purple-600" />
                 </div>
@@ -134,12 +181,17 @@ function App() {
                 <p className="text-gray-600 text-sm">
                   記錄優質廠商資訊，方便後續聯絡與訂購追蹤
                 </p>
+                <span className="inline-block mt-2 text-purple-600 text-sm font-medium">
+                  點擊使用 →
+                </span>
               </div>
             </div>
           </div>
-        ) : (
+        )}
+
+        {/* Search Results Page */}
+        {currentPage === 'results' && (
           <div className="space-y-6">
-            {/* Back Button */}
             <button
               onClick={handleNewSearch}
               className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium"
@@ -147,13 +199,21 @@ function App() {
               <Search className="w-5 h-5" />
               <span>重新搜尋</span>
             </button>
-
-            {/* Results */}
             <ComparisonResults
               results={searchResults}
               keywords={searchKeywords}
             />
           </div>
+        )}
+
+        {/* Batch Comparison Page */}
+        {currentPage === 'batch' && (
+          <BatchComparison onSearchComplete={handleSearchComplete} />
+        )}
+
+        {/* Vendor Management Page */}
+        {currentPage === 'vendors' && (
+          <VendorManagement />
         )}
       </main>
 
@@ -170,7 +230,7 @@ function App() {
               </p>
             </div>
             <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>Built with ❤️ using React + TypeScript</span>
+              <span>Built with React + TypeScript</span>
             </div>
           </div>
         </div>
